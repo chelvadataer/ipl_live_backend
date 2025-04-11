@@ -39,3 +39,34 @@ def get_ipl_live(match_id: str):
             "team2": match_info.get("teamInfo")[1].get("players", [])
         }
     }
+
+@app.get("/list_ipl_matches")
+def list_ipl_matches():
+    url = f"https://api.cricapi.com/v1/currentMatches?apikey={CRICKETDATA_API_KEY}"
+    response = requests.get(url)
+    data = response.json()
+
+    if not data.get("status") == "success":
+        return {"error": "Unable to fetch matches"}
+
+    ipl_matches = []
+    ipl_teams = {
+        "Mumbai Indians", "Chennai Super Kings", "Royal Challengers Bengaluru",
+        "Delhi Capitals", "Punjab Kings", "Rajasthan Royals",
+        "Kolkata Knight Riders", "Sunrisers Hyderabad", "Lucknow Super Giants",
+        "Gujarat Titans"
+    }
+
+    for match in data["data"]:
+        if set(match["teams"]) & ipl_teams:
+            ipl_matches.append({
+                "match_id": match["id"],
+                "name": match["name"],
+                "teams": match["teams"],
+                "status": match["status"],
+                "venue": match["venue"],
+                "date": match["date"],
+                "match_type": match["matchType"]
+            })
+
+    return {"matches": ipl_matches}
