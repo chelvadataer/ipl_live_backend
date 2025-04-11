@@ -30,18 +30,22 @@ def get_ipl_live(match_id: str):
     if not data.get("status") == "success":
         return {"error": "Match data not available or invalid match ID."}
 
-    match_info = data["data"]
+    match_info = data.get("data", {})
+
+    team1_info = match_info.get("teamInfo", [{}])[0]
+    team2_info = match_info.get("teamInfo", [{}])[1] if len(match_info.get("teamInfo", [])) > 1 else {}
+
     return {
         "match_id": match_id,
         "toss_winner": match_info.get("tossWinner"),
         "toss_decision": match_info.get("tossDecision"),
         "status": match_info.get("status"),
         "venue": match_info.get("venue"),
-        "team1": match_info.get("teamInfo")[0].get("name"),
-        "team2": match_info.get("teamInfo")[1].get("name"),
+        "team1": team1_info.get("name", "N/A"),
+        "team2": team2_info.get("name", "N/A"),
         "playing_xi": {
-            "team1": match_info.get("teamInfo")[0].get("players", []),
-            "team2": match_info.get("teamInfo")[1].get("players", [])
+            "team1": team1_info.get("players", []),
+            "team2": team2_info.get("players", [])
         }
     }
 
