@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 import requests
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 
 app = FastAPI()
 
@@ -15,6 +16,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.get("/")
+def root():
+    return JSONResponse(content={"message": "🎯 DT CREATOR API is live! Ready to serve Dream11 IPL data."})
 
 @app.get("/get_ipl_live")
 def get_ipl_live(match_id: str):
