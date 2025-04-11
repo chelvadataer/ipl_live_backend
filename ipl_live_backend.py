@@ -32,8 +32,9 @@ def get_ipl_live(match_id: str):
 
     match_info = data.get("data", {})
 
-    team1_info = match_info.get("teamInfo", [{}])[0]
-    team2_info = match_info.get("teamInfo", [{}])[1] if len(match_info.get("teamInfo", [])) > 1 else {}
+    team_info = match_info.get("teamInfo", [])
+    team1_info = team_info[0] if len(team_info) > 0 else {}
+    team2_info = team_info[1] if len(team_info) > 1 else {}
 
     return {
         "match_id": match_id,
